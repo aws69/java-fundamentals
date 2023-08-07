@@ -12,7 +12,7 @@ This lab is dedicated to practicing Java fundamentals. These problems will chall
 - Stretch Goals
   Upgrade the command line clock to show how fast the program is processing itself between time updates. Display the speed in hertz, kilohertz, megahertz, or gigahertz (Hz, kHz, MHz, GHz). A hertz is defined as “one cycle per second.” A computer that executes one operation per second is a 1 Hz computer.
 
-Hz - 1 cycle per second
-kHz - 1,000 cycles per second
-MHz - 1,000,000 cycles per second
-GHz - 1,000,000,000 cycles per second
+  -Hz - 1 cycle per second
+  -kHz - 1,000 cycles per second
+  -MHz - 1,000,000 cycles per second
+  -GHz - 1,000,000,000 cycles per second
