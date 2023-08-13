@@ -3,10 +3,11 @@
  */
 package basiclibrary;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 class LibraryTest {
@@ -14,27 +15,27 @@ class LibraryTest {
 
 
     @Test
-    public void testRollDice() {
-        ArrayList<Integer> result = Library.roll(6);
-        Assertions.assertEquals(6, result);
+    public void testRoll() {
+        ArrayList<Integer> rolls = Library.roll(5);
+        assertEquals(5, rolls.size());
+        for (int roll : rolls) {
+            assertTrue(roll >= 1 && roll <= 6);
+        }
     }
 
     @Test
-    public void testDuplicates() {
-        int[] arr1 = {1,2,3,4,5,3,5,6};
-        int[] arr2 = {1,2,3,4,5,6};
-        boolean result1 = sut.containsDuplicates(arr1);
-        boolean result2 = sut.containsDuplicates(arr2);
+    public void testContainsDuplicates() {
+        int[] arrWithDuplicates = {1, 2, 3, 4, 2};
+        assertTrue(Library.containsDuplicates(arrWithDuplicates));
 
-        Assertions.assertEquals(true,result1);
-        Assertions.assertEquals(false,result2);
+        int[] arrWithoutDuplicates = {1, 2, 3, 4, 5};
+        assertFalse(Library.containsDuplicates(arrWithoutDuplicates));
     }
 
     @Test
-    public void testAverage() {
-    int[] arr1 = {2,3,4,5,6,7} ;
-    double result = sut.calculateAverage(arr1);
-    Assertions.assertEquals(27, result);
+    public void testCalculateAverage() {
+        int[] arr = {1, 2, 3, 4, 5};
+        assertEquals(3.0, Library.calculateAverage(arr), 0.01);
     }
 
     @Test
@@ -45,7 +46,45 @@ class LibraryTest {
                 {55, 54, 60, 53, 59, 57, 61},
                 {65, 56, 55, 52, 55, 62, 57}
         };
-        int[] result = sut.arrayOfArrays(weeklyMonthTemperatures);
-        Assertions.assertEquals(weeklyMonthTemperatures[2] ,result);
+
+        int[] expectedArray = {65, 56, 55, 52, 55, 62, 57};
+        assertArrayEquals(expectedArray, Library.arrayOfArrays(weeklyMonthTemperatures));
+    }
+
+
+    @Test
+    public void testAnalyzeWeatherData() {
+        int[][] temperatures = {
+                {66, 64, 58, 65, 71, 57, 60},
+                {57, 65, 65, 70, 72, 65, 51},
+                {55, 54, 60, 53, 59, 57, 61},
+                {65, 56, 55, 52, 55, 62, 57}
+        };
+
+        String expectedOutput = "High: 72\n" +
+                "Low: 51\n" +
+                "Never saw temperature: 63\n" +
+                "Never saw temperature: 67\n" +
+                "Never saw temperature: 68\n";
+        assertEquals(expectedOutput, Library.analyzeWeatherData(temperatures));
+    }
+
+
+
+    @Test
+    public void testTally() {
+        List<String> votes = new ArrayList<>();
+        votes.add("Bush");
+        votes.add("Bush");
+        votes.add("Bush");
+        votes.add("Shrub");
+        votes.add("Hedge");
+        votes.add("Shrub");
+        votes.add("Bush");
+        votes.add("Hedge");
+        votes.add("Bush");
+
+        String winner = Library.tally(votes);
+        assertEquals("Bush", winner);
     }
 }
