@@ -3,14 +3,16 @@ package inheritance;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Restaurant {
+public class Shop {
     private String name;
+    private String description;
     private int priceCategory;
     private List<Review> reviews;
     private double averageRating;
 
-    public Restaurant(String name, int priceCategory) {
+    public Shop(String name, String description, int priceCategory) {
         this.name = name;
+        this.description = description;
         this.priceCategory = priceCategory;
         this.reviews = new ArrayList<>();
     }
@@ -18,7 +20,7 @@ public class Restaurant {
     public void addReview(Review review) {
         if (!reviews.contains(review)) {
             reviews.add(review);
-            review.setRestaurant(this);
+            review.setShop(this);
         }
     }
 
@@ -40,14 +42,18 @@ public class Restaurant {
         double newAverage = (double) totalStars / reviews.size();
         setAverageRating(newAverage);
     }
+
     public String getName() {
         return name;
     }
+
     private void setAverageRating(double average) {
         this.averageRating = average;
     }
+
     public String toString() {
-        return "Restaurant: " + name + "\n"
+        return "Shop: " + name + "\n"
+                + "Description: " + description + "\n"
                 + "Price Category: " + "$".repeat(priceCategory) + "\n"
                 + "Average Rating: " + getAverageRating() + "\n"
                 + "Reviews: \n" + reviewsToString();
