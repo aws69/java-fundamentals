@@ -1,83 +1,258 @@
 package inheritance;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+interface Place {
+    String getName();
+    double getAverageStars();
+    void updateAverageStars();
+
+    void addReview(Review review);
+}
+
+class Restaurant implements Place {
+    private final String name;
+    private final int priceCategory;
+    private final List<Review> reviews;
+
+    public Restaurant(String name, int priceCategory) {
+        this.name = name;
+        this.priceCategory = priceCategory;
+        this.reviews = new ArrayList<>();
+    }
+
+    public void addReview(Review review) {
+        reviews.add(review);
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public double getAverageStars() {
+        if (reviews.isEmpty()) {
+            return 0;
+        }
+
+        int totalStars = 0;
+        for (Review review : reviews) {
+            totalStars += review.getStars();
+        }
+        return (double) totalStars / reviews.size();
+    }
+
+    @Override
+    public void updateAverageStars() {
+        // No need to manually update here as getAverageStars() recalculates the average on-the-fly
+    }
+
+    @Override
+    public String toString() {
+        return name + " | Stars: " + getAverageStars() + " | Price: " + "$".repeat(priceCategory);
+    }
+
+    public List<Review> getReviews() {
+        return reviews;
+    }
+}
+
+class Theater implements Place {
+    private final String name;
+    private final List<String> movies;
+    private final List<Review> reviews;
+
+    public Theater(String name) {
+        this.name = name;
+        this.movies = new ArrayList<>();
+        this.reviews = new ArrayList<>();
+    }
+
+    public void addMovie(String movie) {
+        movies.add(movie);
+    }
+
+    public void removeMovie(String movie) {
+        movies.remove(movie);
+    }
+
+    public void addReview(Review review) {
+        reviews.add(review);
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public double getAverageStars() {
+        if (reviews.isEmpty()) {
+            return 0;
+        }
+
+        int totalStars = 0;
+        for (Review review : reviews) {
+            totalStars += review.getStars();
+        }
+        return (double) totalStars / reviews.size();
+    }
+
+    @Override
+    public void updateAverageStars() {
+        // No need to manually update here as getAverageStars() recalculates the average on-the-fly
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Theater: ").append(name).append("\n");
+        sb.append("Movies currently showing:\n");
+        for (String movie : movies) {
+            sb.append("- ").append(movie).append("\n");
+        }
+        sb.append("Average Stars: ").append(getAverageStars()).append("\n");
+        return sb.toString();
+    }
+}
+
+class Shop implements Place {
+    private final String name;
+    private final String description;
+    private final int priceCategory;
+    private final List<Review> reviews;
+
+    public Shop(String name, String description, int priceCategory) {
+        this.name = name;
+        this.description = description;
+        this.priceCategory = priceCategory;
+        this.reviews = new ArrayList<>();
+    }
+
+    public void addReview(Review review) {
+        reviews.add(review);
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public double getAverageStars() {
+        if (reviews.isEmpty()) {
+            return 0;
+        }
+
+        int totalStars = 0;
+        for (Review review : reviews) {
+            totalStars += review.getStars();
+        }
+        return (double) totalStars / reviews.size();
+    }
+
+    @Override
+    public void updateAverageStars() {
+        // No need to manually update here as getAverageStars() recalculates the average on-the-fly
+    }
+
+    @Override
+    public String toString() {
+        return name + " | Price: " + "$".repeat(priceCategory) + "\n" + description;
+    }
+}
+
+class Review {
+    private final Place place;
+    private String movie;
+
+    public Review(String body, User author, Place place) {
+        this.place = place;
+        this.movie = "";
+        if (!author.hasReviewedPlace(place)) {
+            author.addReview(this, place);
+            place.addReview(this);
+        }
+    }
+
+    public Review(String body, User author, Place place, String movie) {
+        this(body, author, place);
+        this.movie = movie;
+    }
+
+    public int getStars() {
+        if (place == null) {
+            return 0; // No place, no stars
+        }
+        return (int) Math.round(place.getAverageStars());
+    }
+
+    public void updateStars(int newStars) {
+        if (newStars >= 0 && newStars <= 5) {
+            int oldStars = getStars();
+            if (place != null) {
+                place.updateAverageStars();
+                System.out.println("Updated stars for " + place.getName() + ": " + oldStars + " -> " + newStars);
+            }
+        } else {
+            System.out.println("Stars should be between 0 and 5.");
+        }
+    }
+}
+
+class User {
+    private final String username;
+    private final Map<Place, Review> reviewedPlaces;
+
+    public User(String username) {
+        this.username = username;
+        this.reviewedPlaces = new HashMap<>();
+    }
+
+    public boolean hasReviewedPlace(Place place) {
+        return reviewedPlaces.containsKey(place);
+    }
+
+    public void addReview(Review review, Place place) {
+        if (!reviewedPlaces.containsKey(place)) {
+            reviewedPlaces.put(place, review);
+        } else {
+            System.out.println(username + " has already reviewed " + place.getName() + ".");
+        }
+    }
+}
+
 public class Main {
     public static void main(String[] args) {
-        testRestaurantAndReviewFunctionality();
-        testShopAndReviewFunctionality();
-        testTheaterFunctionality();
-    }
+        User user1 = new User("Alice");
+        User user2 = new User("Bob");
 
-    private static void testRestaurantAndReviewFunctionality() {
-        try {
-            Restaurant restaurant = new Restaurant("Sample Restaurant", 3);
-            User user1 = new User("Aws");
-            User user2 = new User("Ethar");
+        Restaurant restaurant = new Restaurant("Delicious Eats", 3);
+        Theater theater = new Theater("Cineplex");
+        Shop shop = new Shop("Fashion Paradise", "Trendy clothing for all ages.", 3);
 
-            Review review1 = new Review("Great food and atmosphere!", user1, 4, null);
-            Review review2 = new Review("Terrible service.", user2, 1, null);
-            Review review3 = new Review("Awesome experience!", user1, 5, null);
-
-            user1.addReview(review1);
-            user2.addReview(review2);
-            user1.addReview(review3);
-
-            restaurant.addReview(review1);
-            restaurant.addReview(review2);
-            restaurant.addReview(review3);
-
-            System.out.println("Restaurant and Review Functionality Test:");
-            System.out.println(restaurant);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-        System.out.println();
-    }
-
-    private static void testShopAndReviewFunctionality() {
-        try {
-            Shop shop = new Shop("Fashion Boutique", "Trendy clothes and accessories", 2);
-            User user1 = new User("Emad");
-            User user2 = new User("Kholod");
-
-            Review review1 = new Review("Great collection!", user1, 4, null);
-            Review review2 = new Review("Average experience.", user2, 3, null);
-            Review review3 = new Review("Loved the accessories!", user1, 5, null);
-
-            user1.addReview(review1);
-            user2.addReview(review2);
-            user1.addReview(review3);
-
-            shop.addReview(review1);
-            shop.addReview(review2);
-            shop.addReview(review3);
-
-            System.out.println("Shop and Review Functionality Test:");
-            System.out.println(shop);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-        System.out.println();
-    }
-
-    private static void testTheaterFunctionality() {
-        Theater theater = new Theater("Prime Cinema");
-        theater.addMovie("Mad Max");
         theater.addMovie("Avengers: Endgame");
-        theater.addMovie("The Matrix");
+        theater.addMovie("The Lion King");
 
-        theater.removeMovie("Mad Max");
+        Review review1 = new Review("Great food!", user1, restaurant);
+        Review review2 = new Review("Good movie experience!", user2, theater, "Avengers: Endgame");
+        Review review3 = new Review("Fashionable clothing options.", user1, shop);
 
-        User user3 = new User("Ayoub");
-        User user4 = new User("Sabah");
+        user1.addReview(review1, restaurant);
+        user2.addReview(review2, theater);
+        user1.addReview(review3, shop);
 
-        Review review1 = new Review("Mind-bending movie!", user3, 5, "The Matrix");
-        Review review2 = new Review("Great atmosphere and popcorn.", user4, 4, "Avengers: Endgame");
-
-        user3.addReview(review1);
-        user4.addReview(review2);
-
-        System.out.println("Theater Functionality Test:");
+        System.out.println(restaurant);
         System.out.println(theater);
-        System.out.println();
+        System.out.println(shop);
+
+        review1.updateStars(5);
+        review2.updateStars(4);
+
+        System.out.println(restaurant);
     }
 }
